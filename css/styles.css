@@ -80,14 +80,51 @@
   text-decoration: none;
   vertical-align: baseline;
   cursor: pointer;
-  transition: color 0.25s ease, background-color 0.25s ease;
+  /* Timed to land with the synth hover/click in js/ui-sounds.js — the
+     hover sound is ~50 ms and the click is ~90 ms, so the visual
+     transition needs to feel just as immediate. */
+  transition:
+    color 80ms ease-out,
+    background-color 80ms ease-out,
+    box-shadow 80ms ease-out,
+    transform 60ms ease-out;
 }
 
+/* Embossed (raised) state on hover/focus — a 1-px inner highlight at
+   the top and an inner darken at the bottom read as a soft bevel, and
+   a tight outer drop shadow lifts the pill off the surface. */
 .link-pill:hover,
 .link-pill:focus-visible {
   color: #FF8B8C;
   background: rgba(255, 139, 140, 0.18);
   outline: none;
+  box-shadow:
+    inset 0 1px 0 rgba(255, 255, 255, 0.22),
+    inset 0 -1px 0 rgba(0, 0, 0, 0.28),
+    0 1px 1px rgba(0, 0, 0, 0.22);
+}
+
+/* Pressed state — invert the bevel (inset shadow at the top reads as
+   "pushed in") and nudge the pill down 1 px so it visibly seats. Short
+   transition matches the click sound's attack. */
+.link-pill:active {
+  background: rgba(255, 139, 140, 0.24);
+  box-shadow:
+    inset 0 1px 1.5px rgba(0, 0, 0, 0.35),
+    inset 0 -1px 0 rgba(255, 255, 255, 0.06);
+  transform: translateY(1px);
+  transition:
+    background-color 40ms ease-out,
+    box-shadow 40ms ease-out,
+    transform 40ms ease-out;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .link-pill,
+  .link-pill:active {
+    transform: none;
+    transition-duration: 0ms;
+  }
 }
 
 /* Icon glyphs inside the pill render slightly smaller than the text so
@@ -128,6 +165,16 @@ button.link-pill {
 
 .audio-toggle > .ti {
   font-size: 1.2em;
+}
+
+/* The audio toggle keeps the .link-pill base for typography/spacing but
+   skips the tactile bevel/press — it's a persistent control, not an
+   inline link, and the emboss reads as visual noise in the corner. */
+.audio-toggle:hover,
+.audio-toggle:focus-visible,
+.audio-toggle:active {
+  box-shadow: none;
+  transform: none;
 }
 
 /* CSS Bird Animation */
@@ -213,7 +260,14 @@ button.link-pill {
    the parallax JS reads, and the body has a synthesized height that
    accommodates the about-layer's content. Inside, normal block flow. */
 .parallax-about {
-  top: 100vh;
+  /* Overlap the hero foreground by a few px. Both this layer and the
+     foreground translate at data-speed="0.8", so in math they share an
+     edge — but they're independent compositor layers, and subpixel
+     rounding on fast scrolls can leave a 1-px seam where the .hero-tint
+     blends over the #parallax dark backdrop (pink × dark = red sliver).
+     Overlapping kills the seam; the top 4 px sit over dark ground in
+     the foreground canvas, so the join stays invisible. */
+  top: calc(100vh - 4px);
   bottom: auto;
   height: auto;
   will-change: transform;

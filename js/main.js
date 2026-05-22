@@ -61,9 +61,12 @@
     }
 
     // Hide the (expensive) mix-blend-mode tint once it's no longer
-    // visible — the about-layer covers everything past the hero.
+    // visible. The about-layer starts at top:100vh and rises at
+    // ABOUT_SPEED, so it doesn't fully cover the hero until
+    // scrollY = heroHeight / ABOUT_SPEED — hiding earlier leaves a
+    // band of un-tinted hero at the top of the viewport.
     if (heroTint) {
-      heroTint.style.display = scrollY > heroHeight ? 'none' : '';
+      heroTint.style.display = scrollY > heroHeight / ABOUT_SPEED ? 'none' : '';
     }
   }
 
