@@ -19,15 +19,16 @@
   const audio = document.getElementById('bg-audio');
   const toggle = document.getElementById('audio-toggle');
   if (!audio || !toggle) return;
-  const icon = toggle.querySelector('.ti');
+  // Swap the <use href> on the inline SVG icon. Inlined SVG replaced
+  // the Tabler webfont; the icon symbols are defined at the top of body.
+  const iconUse = toggle.querySelector('.ti use');
 
   audio.volume = BG_VOLUME;
   window.__audioOn = false;
 
   function syncUI() {
-    if (icon) {
-      icon.classList.toggle('ti-volume', !audio.muted);
-      icon.classList.toggle('ti-volume-off', audio.muted);
+    if (iconUse) {
+      iconUse.setAttribute('href', audio.muted ? '#ti-volume-off' : '#ti-volume');
     }
     toggle.setAttribute('aria-pressed', audio.muted ? 'false' : 'true');
     toggle.setAttribute(
