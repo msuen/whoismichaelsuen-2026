@@ -1,0 +1,11 @@
+# macOS
+.DS_Store
+
+# Claude Code workspace
+.claude/settings.local.json
+.claude/skills/
+.agents/
+skills-lock.json
+
+# Dev scratch
+head-tilt-backup.html

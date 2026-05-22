@@ -1,0 +1,290 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <title>Who Is Michael Suen?</title>
+  <meta name="description" content="Michael Suen helps startups and small businesses design memorable brands and digital products their audiences will love.">
+  <meta name="author" content="Michael Suen">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+
+  <!-- Open Graph -->
+  <meta property="og:title" content="Who Is Michael Suen?">
+  <meta property="og:type" content="website">
+  <meta property="og:url" content="https://whoismichaelsuen.com/">
+  <meta property="og:image" content="https://whoismichaelsuen.com/images/favicon-196x196.png">
+  <meta property="og:description" content="Michael Suen is an independent designer who helps startups and small businesses design memorable brands and digital products their audiences will love.">
+
+  <!-- Twitter -->
+  <meta name="twitter:card" content="summary">
+  <meta name="twitter:title" content="Who Is Michael Suen?">
+  <meta name="twitter:description" content="Michael Suen is an independent designer who helps startups and small businesses design memorable brands and digital products their audiences will love.">
+  <meta name="twitter:image" content="https://whoismichaelsuen.com/images/favicon-196x196.png">
+
+  <!-- Favicons -->
+  <link rel="icon" type="image/png" href="images/favicon-32x32.png" sizes="32x32">
+  <link rel="icon" type="image/png" href="images/favicon-16x16.png" sizes="16x16">
+  <link rel="apple-touch-icon" sizes="152x152" href="images/apple-touch-icon-152x152.png">
+
+  <!-- Tailwind CSS -->
+  <script src="https://cdn.tailwindcss.com"></script>
+  <script>
+    tailwind.config = {
+      theme: {
+        extend: {
+          fontFamily: {
+            sans: ['"Gotham SSm A"', '"Gotham SSm B"', 'system-ui', '-apple-system', 'sans-serif'],
+            display: ['"Sentinel SSm A"', '"Sentinel SSm B"', 'Georgia', 'serif'],
+            averia: ['"Averia Libre"', 'Georgia', 'serif'],
+          },
+          colors: {
+            brand: {
+              orange: '#ef4723',
+              dark: '#1c0806',
+              light: '#f7f7f7',
+              charcoal: '#212121',
+            }
+          }
+        }
+      }
+    }
+  </script>
+
+  <!-- Typography.com Fonts -->
+  <link rel="stylesheet" type="text/css" href="https://cloud.typography.com/6754892/689804/css/fonts.css">
+
+  <!-- Google Fonts: Averia Libre (hero title + dark-section copy) -->
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Averia+Libre:ital,wght@0,300;0,400;0,700;1,400;1,700&display=swap">
+
+  <!-- Tabler Icons (link, mail, Bluesky, LinkedIn, Instagram) -->
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@tabler/icons-webfont@3/dist/tabler-icons.min.css">
+
+  <!-- Lottie Player -->
+
+  <!-- Custom Styles -->
+  <link rel="stylesheet" href="css/styles.css?v=24">
+</head>
+<body class="text-gray-400 antialiased" style="background-color: #230210;">
+
+  <!-- Background ambient loop. Starts muted so it satisfies browser
+       autoplay policies; the top-right button toggles audio on/off. -->
+  <audio id="bg-audio" loop preload="auto" aria-hidden="true">
+    <source src="audio/loop-by-the-sea.opus" type="audio/ogg; codecs=opus">
+    <source src="audio/loop-by-the-sea.flac" type="audio/flac">
+  </audio>
+  <button type="button" id="audio-toggle" class="link-pill audio-toggle" aria-label="Turn background audio on" aria-pressed="false">
+    <i class="ti ti-volume-off" aria-hidden="true"></i>
+  </button>
+
+
+  <!-- ============================================
+       PARALLAX HERO
+       ============================================
+       #parallax is fixed inset:0 — it fills the viewport and never
+       scrolls. js/main.js synthesizes a body height so the page is
+       still "scrollable" even though every visible element lives
+       inside this fixed parent. On every scroll, each .parallax-layer
+       (including #about-layer, which is a parallax-layer at speed
+       0.8) gets translate3d(0, -scrollY * speed, 0). Slower = farther
+       back in the scene; the about-layer (speed 0.8) starts at top:
+       100vh so it sits below the fold and rises into view as the
+       user scrolls.
+  -->
+  <section id="parallax" class="fixed inset-0 w-full overflow-hidden">
+    <!-- Parallax layers (back to front). Slower = farther back. -->
+    <div class="parallax-layer" data-speed="0.1" style="z-index: 1;">
+      <picture><source srcset="images/bg8@2x.webp" type="image/webp"><img src="images/bg8@2x.png" alt="" loading="eager"></picture>
+    </div>
+    <div class="parallax-layer" data-speed="0.15" style="z-index: 2;">
+      <picture><source srcset="images/bg7@2x.webp" type="image/webp"><img src="images/bg7@2x.png" alt="" loading="eager"></picture>
+    </div>
+    <div class="parallax-layer" data-speed="0.2" style="z-index: 3;">
+      <picture><source srcset="images/bg6@2x.webp" type="image/webp"><img src="images/bg6@2x.png" alt="" loading="eager"></picture>
+    </div>
+    <div class="parallax-layer birds-layer" data-speed="0.25" style="z-index: 4;">
+      <div class="birds-container">
+        <div class="bird-anim anim1"><div class="bird bird1"></div></div>
+        <div class="bird-anim anim2"><div class="bird bird2"></div></div>
+        <div class="bird-anim anim3"><div class="bird bird3"></div></div>
+        <div class="bird-anim anim4"><div class="bird bird4"></div></div>
+        <div class="bird-anim anim5"><div class="bird bird5"></div></div>
+        <div class="bird-anim anim6"><div class="bird bird1"></div></div>
+        <div class="bird-anim anim7"><div class="bird bird2"></div></div>
+        <div class="bird-anim anim8"><div class="bird bird3"></div></div>
+      </div>
+    </div>
+    <div class="parallax-layer" data-speed="0.3" style="z-index: 5;">
+      <picture><source srcset="images/bg5@2x.webp" type="image/webp"><img src="images/bg5@2x.png" alt="" loading="eager"></picture>
+    </div>
+    <div class="parallax-layer" data-speed="0.4" style="z-index: 6;">
+      <picture><source srcset="images/bg4@2x.webp" type="image/webp"><img src="images/bg4@2x.png" alt="" loading="eager"></picture>
+    </div>
+    <!-- Hero title — sits in the sky between bg4 and bg3 so bg3's
+         buildings rise and occlude it as the user scrolls. -->
+    <div class="parallax-layer" data-speed="0.3" style="z-index: 6;">
+      <header class="absolute inset-0 pointer-events-none">
+        <h1 data-animate="soft-blur-in" class="absolute left-0 right-0 text-center font-averia text-xl md:text-2xl text-black opacity-0 animate-fade-in" style="top: 15%;">
+          Sometimes, he asks himself that question.
+        </h1>
+      </header>
+    </div>
+    <div class="parallax-layer" data-speed="0.5" style="z-index: 7;">
+      <picture><source srcset="images/bg3@2x.webp" type="image/webp"><img src="images/bg3@2x.png" alt="" loading="eager"></picture>
+    </div>
+    <div class="parallax-layer" data-speed="0.65" style="z-index: 8;">
+      <picture><source srcset="images/bg2@2x.webp" type="image/webp"><img src="images/bg2@2x.png" alt="" loading="eager"></picture>
+    </div>
+    <div class="parallax-layer" data-speed="0.65" data-offset-y="40" style="z-index: 8; -webkit-mask-image: linear-gradient(to bottom, transparent 54%, black 58%); mask-image: linear-gradient(to bottom, transparent 54%, black 58%);">
+      <canvas id="water-canvas"></canvas>
+    </div>
+    <div class="parallax-layer ground-blend" data-speed="0.8" style="z-index: 10;"></div>
+    <div class="parallax-layer" data-speed="0.8" style="z-index: 11;">
+      <!-- Static foreground (ground + character) — rendered to canvas so the
+           character's head/shoulders can breathe independently of the ground. -->
+      <canvas id="foreground-canvas" width="1800" height="1125" aria-hidden="true">
+        <picture><source srcset="images/bg1@2x.webp" type="image/webp"><img src="images/bg1@2x.png" alt="" loading="eager"></picture>
+      </canvas>
+    </div>
+
+    <!-- Hero color tint. Blends across everything beneath it in the hero
+         stacking context (sky → buildings → water → ground → character),
+         but sits BELOW the text layer so the title isn't tinted. Edit
+         .hero-tint in css/styles.css to play with blend modes / colors. -->
+    <div class="parallax-layer hero-tint" style="z-index: 12;" aria-hidden="true"></div>
+
+    <!-- Mobile fallback (shown on small screens) -->
+    <div class="mobile-hero-bg md:hidden absolute inset-0 z-10">
+      <picture><source srcset="images/bg@mobile.webp" type="image/webp"><img src="images/bg@mobile.png" alt="" class="w-full h-full object-cover"></picture>
+    </div>
+    <!-- About-layer — bio / commitments / contact / footer. Itself a
+         parallax-layer that starts at top: 100vh (below the fold) and
+         translates UP at speed 0.8 as the user scrolls, rising into
+         view over the hero. -->
+    <div id="about-layer" class="parallax-layer parallax-about" data-speed="0.8" style="z-index: 50;">
+
+      <!-- BIO + COMMITMENTS + CONTACT — single dark section -->
+      <section id="bio" class="py-24 md:py-40 bg-[#230210] font-averia text-base leading-6 text-[#e0e0e0]">
+        <div class="max-w-[560px] mx-auto px-6 space-y-14">
+
+          <div class="space-y-4">
+            <p>Michael Suen is an independent design lead based in Queens, New York. From authoring point-and-click adventures in the 1990s to building living brands and software experiences in the 2020s, he&rsquo;s been carving out corners of the internet for nearly two decades. He now puts his motley skills to use as the founder of <a href="http://weareweirdo.com/" target="_blank" class="link-pill"><i class="ti ti-link" aria-hidden="true"></i>Weirdo</a>, a go-to-market design studio helping uncommon companies become themselves.</p>
+          </div>
+
+          <div>
+            <h3 class="font-bold mb-4">Current commitments</h3>
+            <div class="space-y-3">
+              <div class="flex gap-3 items-start">
+                <div class="sbi-leaf mt-0.5 flex-shrink-0 w-4 h-4 rounded-full bg-[#FF8B8C] flex items-center justify-center">
+                  <span class="text-brand-dark text-[10px] font-bold leading-none">1</span>
+                </div>
+                <p>Helping founders shape and launch emerging technologies with an exceptional, human-centered point of view at <strong class="text-white">Weirdo</strong>.</p>
+              </div>
+              <div class="flex gap-3 items-start">
+                <div class="sbi-leaf mt-0.5 flex-shrink-0 w-4 h-4 rounded-full bg-[#FF8B8C] flex items-center justify-center">
+                  <span class="text-brand-dark text-[10px] font-bold leading-none">2</span>
+                </div>
+                <p>Indoctrinating the next generation of aspiring user experience researchers and designers at <strong class="text-white">Noble Desktop</strong>.</p>
+              </div>
+              <div class="flex gap-3 items-start">
+                <div class="sbi-leaf mt-0.5 flex-shrink-0 w-4 h-4 rounded-full bg-[#FF8B8C] flex items-center justify-center">
+                  <span class="text-brand-dark text-[10px] font-bold leading-none">3</span>
+                </div>
+                <p>Trialing an apprenticeship model to establish <strong class="text-white">support systems of learning</strong> in an environment unfavorable to them.</p>
+              </div>
+              <div class="flex gap-3 items-start">
+                <div class="sbi-leaf mt-0.5 flex-shrink-0 w-4 h-4 rounded-full bg-[#FF8B8C] flex items-center justify-center">
+                  <span class="text-brand-dark text-[10px] font-bold leading-none">4</span>
+                </div>
+                <p>Prototyping tiny resources, tools, and other experiments for independent creatives and service providers.</p>
+              </div>
+            </div>
+          </div>
+
+          <div id="contact">
+            <h3 class="font-bold mb-4">Getting in touch</h3>
+            <div class="space-y-3">
+              <div class="flex gap-3 items-start">
+                <div class="sbi-leaf mt-0.5 flex-shrink-0 w-4 h-4 rounded-full bg-[#FF8B8C] flex items-center justify-center">
+                  <span class="text-brand-dark text-[10px] font-bold leading-none">1</span>
+                </div>
+                <p>Email Michael at <a href="mailto:michael@weirdo.design" class="link-pill"><i class="ti ti-mail" aria-hidden="true"></i>michael@weirdo.design</a>.</p>
+              </div>
+              <div class="flex gap-3 items-start">
+                <div class="sbi-leaf mt-0.5 flex-shrink-0 w-4 h-4 rounded-full bg-[#FF8B8C] flex items-center justify-center">
+                  <span class="text-brand-dark text-[10px] font-bold leading-none">2</span>
+                </div>
+                <p>DM Michael on <a href="https://bsky.app/profile/poetichentai.bsky.social" target="_blank" class="link-pill"><i class="ti ti-brand-bluesky" aria-hidden="true"></i>Bluesky</a>, <a href="https://www.linkedin.com/in/michaelsuen/" target="_blank" class="link-pill"><i class="ti ti-brand-linkedin" aria-hidden="true"></i>LinkedIn</a>, or <a href="https://www.instagram.com/poetichentai" target="_blank" class="link-pill"><i class="ti ti-brand-instagram" aria-hidden="true"></i>Instagram</a>.</p>
+              </div>
+              <div class="flex gap-3 items-start">
+                <div class="sbi-leaf mt-0.5 flex-shrink-0 w-4 h-4 rounded-full bg-[#FF8B8C] flex items-center justify-center">
+                  <span class="text-brand-dark text-[10px] font-bold leading-none">3</span>
+                </div>
+                <p>Inquire about <button type="button" data-open-apply-modal class="link-pill"><i class="ti ti-link" aria-hidden="true"></i>working with Michael</button>.</p>
+              </div>
+            </div>
+          </div>
+
+        </div>
+      </section>
+
+      <!-- FOOTER -->
+      <footer class="py-8 bg-[#230210] text-white/70 text-xs text-center px-6">
+        <p>&copy; 2014–2026</p>
+      </footer>
+    </div>
+  </section>
+
+  <!-- ============================================
+       APPLY AS A CLIENT — MODAL
+       ============================================ -->
+  <div id="apply-modal" class="apply-modal" hidden role="dialog" aria-modal="true" aria-labelledby="apply-modal-title">
+    <div class="apply-modal__backdrop" data-close-apply-modal></div>
+    <div class="apply-modal__card font-averia" role="document">
+      <button type="button" class="apply-modal__close" data-close-apply-modal aria-label="Close">&times;</button>
+      <h2 id="apply-modal-title" class="text-[32px] leading-[36px] tracking-[-0.3px] text-brand-dark mb-2">Inquire as a client</h2>
+      <p class="text-base text-gray-700 mb-6">Would you mind sharing a bit about yourself and your business?</p>
+      <form id="apply-form" class="space-y-4" action="https://formspree.io/p/3006946813824465956/f/client-application" method="POST" novalidate>
+        <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
+          <label class="block">
+            <span class="block text-sm font-bold text-brand-dark mb-1">First name</span>
+            <input required name="firstName" type="text" autocomplete="given-name" class="apply-input">
+          </label>
+          <label class="block">
+            <span class="block text-sm font-bold text-brand-dark mb-1">Last name</span>
+            <input required name="lastName" type="text" autocomplete="family-name" class="apply-input">
+          </label>
+        </div>
+        <label class="block">
+          <span class="block text-sm font-bold text-brand-dark mb-1">Email address</span>
+          <input required name="email" type="email" autocomplete="email" class="apply-input">
+        </label>
+        <label class="block">
+          <span class="block text-sm font-bold text-brand-dark mb-1">Business name</span>
+          <input required name="businessName" type="text" autocomplete="organization" class="apply-input">
+        </label>
+        <label class="block">
+          <span class="block text-sm font-bold text-brand-dark mb-1">Business URL</span>
+          <input name="businessUrl" type="url" placeholder="https://" autocomplete="url" class="apply-input">
+        </label>
+        <label class="block">
+          <span class="block text-sm font-bold text-brand-dark mb-1">What are you looking for help with?</span>
+          <textarea required name="message" rows="5" class="apply-input apply-input--textarea"></textarea>
+        </label>
+        <div class="flex items-center gap-3 pt-2">
+          <button type="submit" class="apply-submit">Send inquiry</button>
+          <button type="button" class="apply-cancel" data-close-apply-modal>Cancel</button>
+          <span class="apply-status" role="status" aria-live="polite"></span>
+        </div>
+      </form>
+    </div>
+  </div>
+
+  <!-- Scripts -->
+  <script src="js/audio-toggle.js?v=1"></script>
+  <script src="js/main.js?v=39"></script>
+  <script src="js/soft-blur-in.js?v=9"></script>
+  <script src="js/water.js?v=2"></script>
+  <script src="js/tune.js?v=6"></script>
+</body>
+</html>
