@@ -4,11 +4,12 @@
 // Plays a low-volume ambient loop and exposes a top-right pill button
 // to mute/unmute it.
 //
-// Browser autoplay policy blocks audio with sound unless the user has
-// interacted with the page first. The loop is started MUTED (always
-// allowed), then unmuted on the FIRST user gesture anywhere — that's
-// our "audio on by default" behavior within what the browser permits.
-// The toggle button stays available for the user to mute/unmute later.
+// Browser autoplay policy blocks unmuted audio.play() unless the page
+// already has user gesture / media engagement. We try unmuted first —
+// for returning visitors, allowlisted domains, and browsers with a
+// permissive policy it just works. If the browser rejects the
+// unmuted play, we fall back to muted playback and unmute on the first
+// user gesture anywhere on the page.
 //
 // Exposes window.__audioOn so js/ui-sounds.js can silence the synth
 // hover/click sounds when the user has muted everything.
@@ -21,7 +22,6 @@
   const icon = toggle.querySelector('.ti');
 
   audio.volume = BG_VOLUME;
-  audio.muted = true;
   window.__audioOn = false;
 
   function syncUI() {
@@ -37,25 +37,46 @@
     window.__audioOn = !audio.muted;
   }
 
-  // Kick off the loop muted so autoplay accepts it. If even muted
-  // playback is rejected, the first-gesture handler below will retry.
-  audio.play().catch(() => {});
-
-  // First user gesture anywhere unmutes — equivalent to "audio on by
-  // default" within autoplay rules. Auto-unmute only fires once; from
-  // then on the toggle is the sole control.
   let autoUnmuted = false;
-  function autoUnmute() {
-    if (autoUnmuted) return;
-    autoUnmuted = true;
-    audio.muted = false;
-    if (audio.paused) audio.play().catch(() => {});
+
+  function startMutedFallback() {
+    audio.muted = true;
     syncUI();
-    window.removeEventListener('pointerdown', autoUnmute);
-    window.removeEventListener('keydown', autoUnmute);
+    audio.play().catch(() => {});
+
+    function autoUnmute() {
+      if (autoUnmuted) return;
+      autoUnmuted = true;
+      audio.muted = false;
+      if (audio.paused) audio.play().catch(() => {});
+      syncUI();
+      window.removeEventListener('pointerdown', autoUnmute);
+      window.removeEventListener('keydown', autoUnmute);
+    }
+    window.addEventListener('pointerdown', autoUnmute);
+    window.addEventListener('keydown', autoUnmute);
   }
-  window.addEventListener('pointerdown', autoUnmute);
-  window.addEventListener('keydown', autoUnmute);
+
+  // Try unmuted first. If the browser allows it (returning visitor,
+  // high media engagement, allowlist, permissive policy), we're done.
+  // Otherwise fall back to muted + first-gesture unmute.
+  audio.muted = false;
+  const tryUnmuted = audio.play();
+  if (tryUnmuted && typeof tryUnmuted.then === 'function') {
+    tryUnmuted.then(
+      () => {
+        autoUnmuted = true;
+        syncUI();
+      },
+      () => {
+        startMutedFallback();
+      },
+    );
+  } else {
+    // Older browsers — play() returned void. Assume it worked; if not,
+    // the first toggle click recovers it.
+    syncUI();
+  }
 
   toggle.addEventListener('click', () => {
     autoUnmuted = true; // user took control; suppress auto-unmute
@@ -66,5 +87,6 @@
     syncUI();
   });
 
+  // Initial UI reflects the starting state (unmuted attempt).
   syncUI();
 })();
