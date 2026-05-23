@@ -9,6 +9,11 @@
 *::before,
 *::after { box-sizing: border-box; }
 html { -webkit-text-size-adjust: 100%; }
+html, body {
+  overflow-x: hidden;
+  overscroll-behavior-x: none;
+  touch-action: pan-y;
+}
 body {
   margin: 0;
   line-height: inherit;
@@ -32,6 +37,7 @@ button {
 }
 input, textarea, select {
   font: inherit;
+  font-size: 16px; /* iOS zooms in on focus if computed size < 16px */
   color: inherit;
   margin: 0;
 }
