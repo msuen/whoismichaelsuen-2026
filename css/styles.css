@@ -163,6 +163,12 @@ input, textarea, select {
      between hero and the next section is visually seamless as the
      parallax layers translate up off the bottom. */
   background: linear-gradient(to bottom, #f4e690 0%, #f4e690 45%, #230210 70%);
+  /* Pin to the small viewport so the hero doesn't resize when iOS Safari
+     collapses its URL bar mid-scroll. inset:0 (from .inset-0) would otherwise
+     stretch with the visible viewport. */
+  bottom: auto;
+  height: 100vh;
+  height: 100svh;
   /* Promote to a compositor layer so the sticky stick/unstick
      transition doesn't trigger main-thread repaints. */
   will-change: transform;
@@ -440,6 +446,7 @@ button.link-pill {
      Overlapping kills the seam; the top 4 px sit over dark ground in
      the foreground canvas, so the join stays invisible. */
   top: calc(100vh - 4px);
+  top: calc(100svh - 4px);
   bottom: auto;
   height: auto;
   will-change: transform;
@@ -604,6 +611,7 @@ blockquote p {
   width: 100%;
   max-width: 560px;
   max-height: calc(100vh - 48px);
+  max-height: calc(100svh - 48px);
   overflow-y: auto;
   animation: apply-modal-rise 0.25s ease-out;
 }

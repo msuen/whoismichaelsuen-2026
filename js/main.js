@@ -14,6 +14,7 @@
   const ABOUT_SPEED = 0.8;
 
   let heroHeight = window.innerHeight;
+  let lastWidth = window.innerWidth;
   const heroTint = hero.querySelector('.hero-tint');
 
   function updateBodyHeight() {
@@ -26,7 +27,14 @@
     }
   }
   updateBodyHeight();
-  window.addEventListener('resize', updateBodyHeight);
+  // iOS Safari fires resize when the URL bar toggles on scroll. Ignore those —
+  // the hero is pinned to 100svh in CSS, so heroHeight should only update on
+  // genuine layout changes (rotation, desktop window resize).
+  window.addEventListener('resize', () => {
+    if (window.innerWidth === lastWidth) return;
+    lastWidth = window.innerWidth;
+    updateBodyHeight();
+  });
 
   let pendingScroll = false;
 
