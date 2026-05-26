@@ -354,11 +354,15 @@
     submitBtn.textContent = 'Sending…';
     clearStatus();
 
+    const controller = new AbortController();
+    const timeoutId = setTimeout(() => controller.abort(), 15000);
+
     try {
       const res = await fetch(form.action, {
         method: 'POST',
         headers: { Accept: 'application/json' },
         body: new FormData(form),
+        signal: controller.signal,
       });
       if (!res.ok) {
         let detail = '';
@@ -381,12 +385,17 @@
       submitBtn.disabled = true;
       submitBtn.textContent = 'Sent';
     } catch (err) {
+      console.error('[apply-form] submission failed:', err);
       if (status) {
         status.dataset.state = 'error';
-        status.textContent = `Couldn't send. Try emailing michael@weirdo.design directly.`;
+        status.textContent = err.name === 'AbortError'
+          ? `Request timed out. Try emailing michael@weirdo.design directly.`
+          : `Couldn't send. Try emailing michael@weirdo.design directly.`;
       }
       submitBtn.disabled = false;
       submitBtn.textContent = originalLabel;
+    } finally {
+      clearTimeout(timeoutId);
     }
   });
 })();
