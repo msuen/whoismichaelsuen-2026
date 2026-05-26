@@ -283,6 +283,9 @@
           <span class="block text-sm font-bold text-brand-dark mb-1">What are you looking for help with?</span>
           <textarea required name="message" rows="5" class="apply-input apply-input--textarea"></textarea>
         </label>
+        <!-- Honeypot: Formspree silently rejects submissions where this is filled.
+             Hidden from humans (and screen readers via aria-hidden + tabindex). -->
+        <input type="text" name="_gotcha" tabindex="-1" autocomplete="off" aria-hidden="true" style="position:absolute;left:-9999px;width:1px;height:1px;opacity:0">
         <div class="flex items-center gap-3 pt-2">
           <button type="submit" class="apply-submit">Send inquiry</button>
           <button type="button" class="apply-cancel" data-close-apply-modal>Cancel</button>
