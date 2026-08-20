@@ -235,7 +235,16 @@ input, textarea, select {
   display: inline-flex;
   align-items: center;
   gap: 0.3em;
-  padding: 0.05em 0.4em;
+  /* An inline-flex box contributes its full padded height to the line
+     box, so inheriting the paragraph's line-height made any line
+     containing a pill taller than its neighbours. Sizing the pill from
+     line-height: 1 and cancelling the vertical padding with an equal
+     negative block margin keeps its baseline offset identical to plain
+     inline text — the pill is drawn inside the existing leading rather
+     than pushing the line box open. */
+  line-height: 1;
+  padding: 0.2em 0.4em;
+  margin-block: -0.2em;
   border-radius: 4px;
   background: rgba(255, 255, 255, 0.10);
   color: inherit;
@@ -320,6 +329,9 @@ button.link-pill {
   border: 0;
   font: inherit;
   font-weight: 600;
+  /* `font: inherit` is a shorthand — it resets line-height too, which
+     would undo the pill's line-box compensation above. Restore it. */
+  line-height: 1;
 }
 
 /* ============================================
@@ -336,6 +348,9 @@ button.link-pill {
   right: 16px;
   z-index: 100000;
   padding: 6px 8px;
+  /* Not in a line box — drop the pill's line-box compensation margin so
+     top/right position the button exactly. */
+  margin-block: 0;
   font-size: 16px;
   background: rgba(255, 255, 255, 0.10);
   -webkit-tap-highlight-color: transparent;
