@@ -1,11 +1,11 @@
 <!DOCTYPE html>
-<html lang="en">
+<html lang="en" data-encounter-variant="expanded">
 <head>
   <meta charset="utf-8">
   <title>Who Is Michael Suen?</title>
   <meta name="description" content="Michael Suen helps startups and small businesses design memorable brands and digital products their audiences will love.">
   <meta name="author" content="Michael Suen">
-  <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
 
   <!-- Open Graph -->
   <meta property="og:title" content="Who Is Michael Suen?">
@@ -33,6 +33,7 @@
   <!-- Custom Styles (preflight + utility classes + components). Icons
        are inlined as <svg><symbol> defs at the top of body — no webfont. -->
   <link rel="stylesheet" href="css/styles.css?v=32">
+  <link rel="stylesheet" href="css/encounter.css?v=20261007-1">
 </head>
 <body class="text-gray-400 antialiased" style="background-color: #230210;">
 
@@ -79,13 +80,12 @@
     </defs>
   </svg>
 
-  <!-- Background ambient loop. Starts muted so it satisfies browser
-       autoplay policies; the top-right button toggles audio on/off. -->
-  <audio id="bg-audio" loop preload="auto" aria-hidden="true">
+  <!-- Audio is explicitly opt-in. No first-gesture unmute. -->
+  <audio id="bg-audio" loop preload="none" aria-hidden="true">
     <source src="audio/loop-by-the-sea.opus" type="audio/ogg; codecs=opus">
     <source src="audio/loop-by-the-sea.flac" type="audio/flac">
   </audio>
-  <button type="button" id="audio-toggle" class="link-pill audio-toggle" aria-label="Turn background audio on" aria-pressed="false">
+  <button type="button" id="audio-toggle" class="link-pill audio-toggle" aria-label="Turn ambience and character sounds on" aria-pressed="false">
     <svg class="ti" aria-hidden="true"><use href="#ti-volume-off"/></svg>
   </button>
 
@@ -164,6 +164,17 @@
          but sits BELOW the text layer so the title isn't tinted. Edit
          .hero-tint in css/styles.css to play with blend modes / colors. -->
     <div class="parallax-layer hero-tint" style="z-index: 12;" aria-hidden="true"></div>
+
+    <!-- Encounter shares the foreground's scroll speed; no scroll hijacking. -->
+    <div class="parallax-layer encounter-layer" data-speed="0.8">
+      <button type="button" id="encounter-trigger" class="encounter-trigger" aria-label="Start a conversation with Michael" aria-expanded="false" aria-controls="encounter-dialog encounter-player">
+        <span class="encounter-cue">Oh, hello.</span>
+      </button>
+      <section id="encounter-dialog" class="encounter-panel" role="dialog" aria-modal="false" aria-labelledby="encounter-heading" aria-describedby="encounter-copy" tabindex="-1" hidden></section>
+      <p id="encounter-quiet" class="encounter-quiet" role="status" aria-live="polite" hidden></p>
+      <!-- Replies belong to the character's scene, not the viewport. -->
+      <div id="encounter-player" class="encounter-player font-averia" role="group" aria-label="Your replies" hidden></div>
+    </div>
 
     <!-- Mobile fallback (shown on small screens) -->
     <div class="mobile-hero-bg md:hidden absolute inset-0 z-10">
@@ -296,10 +307,12 @@
   </div>
 
   <!-- Scripts -->
-  <script src="js/audio-toggle.js?v=4"></script>
-  <script src="js/ui-sounds.js?v=2"></script>
+  <script src="js/encounter-dialogue.js?v=20261007-1"></script>
+  <script src="js/encounter-typewriter.js?v=20261007-1"></script>
+  <script src="js/encounter.js?v=20261007-1"></script>
+  <script src="js/ui-sounds.js?v=20261007-1"></script>
   <script src="js/main.js?v=42"></script>
   <script src="js/soft-blur-in.js?v=9"></script>
-  <script src="js/water.js?v=2"></script>
+  <script src="js/water.js?v=3"></script>
 </body>
 </html>

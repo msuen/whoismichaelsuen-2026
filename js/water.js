@@ -46,6 +46,13 @@
   });
 
   const startTime = performance.now();
+  // Honor reduced motion: leave the waterfront still when requested.
+  const reducedMotion = matchMedia('(prefers-reduced-motion: reduce)');
+  let frameId = 0;
+  reducedMotion.addEventListener('change', () => {
+    cancelAnimationFrame(frameId);
+    render();
+  });
 
   const aboutLayerEl = document.getElementById('about-layer');
 
@@ -55,11 +62,11 @@
     // Skip per-frame work when the about-layer has fully covered the
     // hero — the water canvas is occluded so there's nothing to draw.
     if (aboutLayerEl && aboutLayerEl.getBoundingClientRect().top <= 0) {
-      requestAnimationFrame(render);
+      if (!reducedMotion.matches) frameId = requestAnimationFrame(render);
       return;
     }
 
-    const t = (performance.now() - startTime) / 1000;
+    const t = reducedMotion.matches ? 0 : (performance.now() - startTime) / 1000;
     const dpr = window.devicePixelRatio || 1;
     const pw = canvas.parentElement.clientWidth;
     const ph = canvas.parentElement.clientHeight;
@@ -156,6 +163,6 @@
       );
     }
 
-    requestAnimationFrame(render);
+    if (!reducedMotion.matches) frameId = requestAnimationFrame(render);
   }
 })();

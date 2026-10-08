@@ -1,0 +1,490 @@
+/* Authored waterfront conversation: character speech and visitor replies.
+   The original artwork and character framing remain unchanged. */
+:root {
+  --encounter-ink: #230210;
+  --encounter-paper: #ffe8cf;
+  --encounter-accent: #ff9b9b;
+  --encounter-ease: cubic-bezier(.215, .61, .355, 1);
+}
+#parallax { isolation: isolate; overflow: clip; }
+.encounter-biography-space { height: 0; }
+.encounter-layer { z-index: 13; pointer-events: none; }
+.encounter-in-conversation .encounter-layer { z-index: 51; }
+.encounter-panel[hidden],
+.encounter-quiet[hidden],
+.encounter-switcher[hidden] { display: none; }
+
+.encounter-trigger {
+  position: absolute;
+  left: var(--character-x, 45%);
+  top: var(--character-y, 60%);
+  width: var(--character-w, 120px);
+  height: var(--character-h, 240px);
+  pointer-events: auto;
+  border-radius: 45% 45% 12% 12%;
+  -webkit-tap-highlight-color: transparent;
+}
+.encounter-cue {
+  position: absolute;
+  left: var(--cue-local-x, 100%);
+  top: var(--cue-local-y, 25%);
+  min-width: 124px;
+  min-height: 52px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 10px 16px;
+  color: var(--encounter-ink);
+  background: var(--encounter-paper);
+  border: 1px solid rgb(35 2 16 / .16);
+  border-radius: 16px;
+  font-size: 1.125rem;
+  white-space: nowrap;
+  opacity: 0;
+  visibility: hidden;
+  pointer-events: none;
+  transform: translate3d(0, 8px, 0) scale(.97);
+  transform-origin: 50% 100%;
+  transition: opacity 300ms var(--encounter-ease), transform 300ms var(--encounter-ease);
+}
+.encounter-cue::after {
+  content: '';
+  position: absolute;
+  left: calc(50% - 6px);
+  bottom: -6px;
+  width: 11px;
+  height: 11px;
+  background: var(--encounter-paper);
+  border-right: 1px solid rgb(35 2 16 / .16);
+  border-bottom: 1px solid rgb(35 2 16 / .16);
+  transform: rotate(45deg);
+}
+.encounter-layer.is-greeted:not(.is-quiet) .encounter-cue,
+.encounter-trigger:focus-visible .encounter-cue {
+  opacity: 1;
+  visibility: visible;
+  pointer-events: auto;
+  transform: translate3d(0, 0, 0) scale(1);
+}
+.encounter-layer .encounter-trigger[aria-expanded="true"] .encounter-cue { opacity: 0; visibility: hidden; pointer-events: none; }
+.encounter-trigger:focus-visible { outline: 2px solid var(--encounter-paper); outline-offset: 5px; }
+.encounter-trigger:focus-visible .encounter-cue { outline: 2px solid var(--encounter-ink); outline-offset: 3px; }
+@media (hover: hover) and (pointer: fine) {
+  .encounter-trigger:hover .encounter-cue { color: #6d1637; border-color: rgb(35 2 16 / .32); }
+}
+
+.encounter-panel {
+  position: absolute;
+  left: var(--panel-x, 50%);
+  top: var(--panel-y, 25%);
+  width: 380px;
+  max-width: calc(100vw - 32px);
+  max-height: min(calc(100svh - 180px), var(--panel-room, 100svh));
+  overflow-y: auto;
+  pointer-events: auto;
+  color: var(--encounter-paper);
+  background: var(--encounter-ink);
+  border: 1px solid rgb(255 232 207 / .24);
+  border-radius: 5px;
+  padding: 22px;
+  font-family: 'Averia Libre', Georgia, serif;
+  animation: encounter-enter 180ms var(--encounter-ease);
+  overscroll-behavior: contain;
+  scrollbar-width: thin;
+  scrollbar-color: var(--encounter-accent) transparent;
+}
+.encounter-panel:focus { outline: none; }
+.encounter-panel:focus-visible { outline: 2px solid var(--encounter-accent); outline-offset: 4px; }
+.encounter-panel h2 {
+  margin: 6px 28px 10px 0;
+  max-width: 24ch;
+  font-size: 1.5rem;
+  font-weight: 400;
+  text-wrap: balance;
+  letter-spacing: -.02em;
+}
+.encounter-panel p {
+  max-width: 48ch;
+  font-size: 1.0625rem;
+  line-height: 1.5;
+  text-wrap: pretty;
+}
+.encounter-panel .encounter-speaker {
+  font-size: .875rem;
+  color: var(--encounter-accent);
+}
+/* Linked words stay in his sentence, with a generous inline tap area. */
+.encounter-panel .encounter-speech-link {
+  color: inherit;
+  padding: 14px 2px;
+  margin: -14px -2px;
+  border-radius: 2px;
+  text-decoration: underline;
+  text-decoration-thickness: 1px;
+  text-underline-offset: 3px;
+}
+.encounter-panel .encounter-speech-link:hover { text-decoration-thickness: 2px; }
+.encounter-panel .encounter-speech-link:focus-visible { outline: 2px solid currentColor; outline-offset: 2px; }
+.encounter-close {
+  position: absolute;
+  top: 2px;
+  right: 2px;
+  width: 48px;
+  height: 48px;
+  font-family: Georgia, serif;
+  font-size: 1.5rem;
+  color: inherit;
+}
+.encounter-close:hover { color: var(--encounter-accent); }
+.encounter-choices {
+  display: grid;
+  gap: 2px;
+  padding-top: 16px;
+  margin-top: 18px;
+  border-top: 1px solid rgb(255 232 207 / .18);
+}
+.encounter-choice,
+.encounter-answer-link {
+  display: flex;
+  align-items: baseline;
+  gap: 10px;
+  width: 100%;
+  min-width: 0;
+  min-height: 48px;
+  padding: 10px 8px;
+  color: inherit;
+  font-size: 1rem;
+  line-height: 1.4;
+  text-align: left;
+  text-decoration: none;
+  border-radius: 3px;
+}
+.encounter-choice::before { content: '›'; color: var(--encounter-accent); flex-shrink: 0; }
+.encounter-choice:hover,
+.encounter-answer-link:hover { color: var(--encounter-accent); background: rgb(255 232 207 / .06); }
+.encounter-choice:active { transform: translateY(1px); }
+.encounter-choice:focus-visible,
+.encounter-answer-link:focus-visible,
+.encounter-close:focus-visible { outline: 2px solid var(--encounter-accent); outline-offset: -2px; }
+.encounter-answer-link { text-decoration: underline; text-underline-offset: 4px; }
+.encounter-answer-actions { display: grid; gap: 2px; }
+
+/* A: small speech bubble, close to the person rather than the viewport. */
+[data-encounter-variant="scene"] .encounter-panel { overflow: visible; }
+[data-encounter-variant="scene"] .encounter-panel::after {
+  content: '';
+  position: absolute;
+  width: 12px;
+  height: 12px;
+  left: -7px;
+  bottom: 56px;
+  background: var(--encounter-ink);
+  border-left: 1px solid rgb(255 232 207 / .24);
+  border-bottom: 1px solid rgb(255 232 207 / .24);
+  transform: rotate(45deg);
+}
+
+/* B: a classic, wide adventure-game dialogue tray, with separate
+   speaker/narrative and numbered player responses. */
+[data-encounter-variant="adventure"] .encounter-panel {
+  width: min(980px, calc(100vw - 64px));
+  padding: 28px 32px;
+  border-radius: 2px;
+}
+.adventure-dialogue { display: grid; grid-template-columns: 1fr 1fr; gap: 40px; }
+.adventure-narrative { min-width: 0; padding: 10px 0; }
+.adventure-narrative .encounter-speaker {
+  font-family: ui-monospace, monospace;
+  text-transform: uppercase;
+  letter-spacing: .14em;
+  font-size: .75rem;
+}
+.adventure-narrative h2 { font-size: 1.875rem; }
+.adventure-responses { min-width: 0; padding: 8px 0 8px 28px; border-left: 1px solid rgb(255 232 207 / .18); }
+.adventure-responses .encounter-choices { padding: 0; margin: 0; border: 0; }
+.adventure-responses .encounter-choice::before { content: attr(data-number) '.'; font-family: ui-monospace, monospace; font-size: .875rem; }
+
+/* C: an open letter, deliberately more editorial than a game HUD. */
+[data-encounter-variant="letter"] .encounter-panel {
+  width: 410px;
+  color: var(--encounter-ink);
+  background: var(--encounter-paper);
+  border: 1px solid rgb(35 2 16 / .12);
+  border-radius: 1px;
+  padding: 30px;
+}
+.letter-preface { padding-bottom: 14px; border-bottom: 1px solid rgb(35 2 16 / .16); }
+.encounter-panel .letter-preface p { color: #754553; font-size: .875rem; font-style: italic; }
+.letter-body { padding-top: 14px; }
+.letter-body h2 { font-size: 1.875rem; }
+.letter-questions { margin-top: 22px; }
+.letter-questions .encounter-choices { margin: 0; padding: 0; border-top-color: rgb(35 2 16 / .16); }
+.letter-questions .encounter-choice,
+.letter-questions .encounter-answer-link { padding-left: 0; text-decoration: underline; text-underline-offset: 4px; text-decoration-color: rgb(35 2 16 / .35); }
+.letter-questions .encounter-choice::before { display: none; }
+.letter-signature { padding-top: 16px; }
+.encounter-panel .letter-signature p { font-style: italic; font-size: 1rem; }
+[data-encounter-variant="letter"] .encounter-choice:hover,
+[data-encounter-variant="letter"] .encounter-answer-link:hover { color: #891e41; background: rgb(35 2 16 / .04); }
+[data-encounter-variant="letter"] .encounter-close:hover { color: #891e41; }
+[data-encounter-variant="letter"] .encounter-choice:focus-visible,
+[data-encounter-variant="letter"] .encounter-answer-link:focus-visible,
+[data-encounter-variant="letter"] .encounter-close:focus-visible { outline-color: #891e41; }
+
+.encounter-quiet {
+  position: absolute;
+  left: var(--quiet-x, 50%);
+  top: var(--quiet-y, 55%);
+  width: 240px;
+  padding: 12px;
+  text-align: center;
+  color: var(--encounter-paper);
+  background: var(--encounter-ink);
+  border: 1px solid rgb(255 232 207 / .2);
+  border-radius: 4px;
+  font-size: 1rem;
+  line-height: 1.4;
+  animation: encounter-enter 180ms var(--encounter-ease);
+}
+
+.apply-modal { z-index: 100002; }
+
+@keyframes encounter-enter {
+  from { opacity: 0; transform: translateY(8px); }
+  to { opacity: 1; transform: translateY(0); }
+}
+[data-encounter-input="keyboard"] .encounter-panel,
+[data-encounter-input="keyboard"] .encounter-quiet { animation: none; }
+[data-encounter-input="keyboard"] .encounter-cue { transition: none; }
+@media (max-width: 959px) {
+  .encounter-panel { width: 380px; max-height: min(calc(100svh - 185px), var(--panel-room, 100svh)); padding: 16px; }
+  .encounter-choices { margin-top: 12px; padding-top: 10px; gap: 0; }
+  [data-encounter-variant="scene"] .encounter-panel { overflow-y: auto; }
+  [data-encounter-variant="scene"] .encounter-panel::after { display: none; }
+  [data-encounter-variant="adventure"] .encounter-panel { width: calc(100vw - 32px); padding: 20px; }
+  .adventure-dialogue { grid-template-columns: 1fr; gap: 18px; }
+  .adventure-narrative { padding: 0; }
+  .adventure-narrative h2 { font-size: 1.5rem; }
+  .adventure-responses { padding: 14px 0 0; border-left: 0; border-top: 1px solid rgb(255 232 207 / .18); }
+  [data-encounter-variant="letter"] .encounter-panel { padding: 24px; }
+  .letter-body h2 { font-size: 1.5rem; }
+}
+@media (max-width: 374px) {
+  #parallax h1 { padding: 0 16px; font-size: 1.0625rem; }
+  .encounter-panel { max-height: min(calc(100svh - 164px), var(--panel-room, 100svh)); padding: 16px; }
+  .encounter-panel p { font-size: 1rem; }
+  .encounter-panel .encounter-speaker { font-size: .875rem; }
+  .encounter-choices { margin-top: 12px; padding-top: 10px; }
+}
+/* Two voices, one scene: cream speech above him; dark reply bubbles
+   anchored below his feet. No card connects or contains them. */
+.encounter-panel .encounter-sr-only {
+  position: absolute;
+  width: 1px;
+  height: 1px;
+  padding: 0;
+  margin: 0;
+  overflow: hidden;
+  clip-path: inset(50%);
+  white-space: nowrap;
+}
+/* Continue the dark dock beneath the character. Reply options can live
+   below the first fold without moving or rescaling the artwork. */
+.encounter-stage::after {
+  content: '';
+  position: absolute;
+  top: 100%;
+  left: 0;
+  right: 0;
+  height: 100%;
+  background: var(--encounter-ink);
+}
+.encounter-layer.is-floating .encounter-panel,
+.encounter-quiet {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: max-content;
+  min-width: 124px;
+  min-height: 52px;
+  max-width: min(300px, calc(100vw - 32px));
+  max-height: none;
+  padding: 10px 16px;
+  overflow: visible;
+  color: var(--encounter-ink);
+  background: var(--encounter-paper);
+  border: 1px solid rgb(35 2 16 / .16);
+  border-radius: 16px;
+  font-size: 1.125rem;
+  line-height: 1.4;
+  text-align: center;
+  transform-origin: var(--tail-x, 50%) 100%;
+  animation: speech-appear 160ms var(--encounter-ease);
+}
+.encounter-layer.is-floating .encounter-panel::after,
+.encounter-quiet::after {
+  content: '';
+  display: block;
+  position: absolute;
+  left: calc(var(--tail-x, 50%) - 6px);
+  top: auto;
+  bottom: -6px;
+  width: 11px;
+  height: 11px;
+  background: var(--encounter-paper);
+  border: 0;
+  border-right: 1px solid rgb(35 2 16 / .16);
+  border-bottom: 1px solid rgb(35 2 16 / .16);
+  transform: rotate(45deg);
+}
+.encounter-quiet::after { left: calc(50% - 6px); }
+.encounter-layer.is-floating .encounter-panel:focus-visible { outline-color: #891e41; }
+.encounter-layer.is-floating .encounter-panel[hidden],
+.encounter-quiet[hidden], .encounter-player[hidden] { display: none; }
+.encounter-panel .floating-speech {
+  max-height: none;
+  overflow: visible;
+  font-size: 1.125rem;
+  line-height: 1.4;
+}
+.encounter-player {
+  position: absolute;
+  z-index: 2;
+  left: var(--reply-x, 50%);
+  top: var(--reply-y, 75%);
+  transform: translateX(-50%);
+  width: min(620px, calc(100vw - 32px));
+  max-height: none;
+  padding: 4px 2px;
+  pointer-events: auto;
+  overflow: visible;
+  overscroll-behavior: contain;
+  scrollbar-width: thin;
+  scrollbar-color: var(--encounter-paper) transparent;
+}
+.encounter-player .encounter-choices { display: flex; justify-content: center; flex-wrap: wrap; gap: 10px; padding: 0; margin: 0; border: 0; }
+.encounter-player .encounter-choice,
+.encounter-player .encounter-answer-link {
+  justify-content: center;
+  align-items: center;
+  width: auto;
+  max-width: 100%;
+  min-height: 48px;
+  padding: 12px 16px;
+  color: var(--encounter-paper);
+  background: var(--encounter-ink);
+  border: 1px solid rgb(255 232 207 / .2);
+  border-radius: 4px;
+  font-size: 1rem;
+  line-height: 1.4;
+  text-align: center;
+  animation: none;
+}
+.encounter-player[data-motion="on"] .encounter-choice,
+.encounter-player[data-motion="on"] .encounter-answer-link {
+  animation: player-appear 140ms var(--encounter-ease) 160ms both, reply-bob 5.8s ease-in-out 300ms infinite;
+}
+.encounter-player[data-motion="on"] :is(.encounter-choice, .encounter-answer-link):nth-child(2) { animation-duration: 140ms, 6.4s; animation-delay: 160ms, 1.2s; }
+.encounter-player[data-motion="on"] :is(.encounter-choice, .encounter-answer-link):nth-child(3) { animation-duration: 140ms, 5.3s; animation-delay: 160ms, .7s; }
+.encounter-player[data-motion="on"] :is(.encounter-choice, .encounter-answer-link):nth-child(4) { animation-duration: 140ms, 6.1s; animation-delay: 160ms, 1.6s; }
+.encounter-player[data-motion="on"]:focus-within :is(.encounter-choice, .encounter-answer-link) { animation-play-state: running, paused; }
+.encounter-player .encounter-choice::before { display: none; }
+.encounter-player .encounter-choice:hover,
+.encounter-player .encounter-answer-link:hover { color: var(--encounter-paper); background: var(--encounter-ink); }
+.encounter-player .encounter-choice:focus-visible,
+.encounter-player .encounter-answer-link:focus-visible { outline-color: var(--encounter-paper); outline-offset: -4px; }
+@media (hover: hover) and (pointer: fine) {
+  .encounter-player[data-motion="on"]:hover :is(.encounter-choice, .encounter-answer-link) { animation-play-state: running, paused; }
+  .encounter-player .encounter-choice:hover,
+  .encounter-player .encounter-answer-link:hover { background: #431323; border-color: rgb(255 232 207 / .5); }
+}
+@media (max-width: 639px) {
+  .encounter-player .encounter-choices { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 8px; }
+  .encounter-player .encounter-choice,
+  .encounter-player .encounter-answer-link { padding: 10px 12px; }
+}
+@media (min-width: 640px) and (max-height: 519px) {
+  .encounter-player { width: min(960px, calc(100vw - 32px)); overflow-x: auto; overflow-y: hidden; }
+  .encounter-player .encounter-choices { flex-wrap: nowrap; justify-content: flex-start; }
+  .encounter-player .encounter-choice,
+  .encounter-player .encounter-answer-link { flex-shrink: 0; white-space: nowrap; }
+}
+/* Selected A comparison. Keep the earlier scene treatment unchanged.
+   Content-sized bubbles wrap naturally; short landscape keeps its row. */
+:is([data-encounter-variant="lighter"], [data-encounter-variant="expanded"]) .encounter-player .encounter-choices {
+  display: flex;
+  gap: 8px;
+}
+:is([data-encounter-variant="lighter"], [data-encounter-variant="expanded"]) .encounter-player .encounter-choice {
+  flex: 0 0 auto;
+  width: max-content;
+  padding: 10px 16px;
+  background: rgb(35 2 16 / .78);
+  border-color: rgb(255 232 207 / .16);
+  border-radius: 14px;
+}
+@media (hover: hover) and (pointer: fine) {
+  :is([data-encounter-variant="lighter"], [data-encounter-variant="expanded"]) .encounter-player .encounter-choice:hover {
+    background: #431323;
+    border-color: rgb(255 232 207 / .5);
+  }
+}
+
+/* Authored conversation: four real replies, equal columns and rows.
+   Keep the previous A/scene compositions available as comparisons. */
+[data-encounter-variant="expanded"] .encounter-player {
+  width: min(620px, calc(100vw - 32px));
+  overflow: visible;
+}
+[data-encounter-variant="expanded"] .encounter-player .encounter-choices {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  grid-template-rows: repeat(2, minmax(48px, 1fr));
+  gap: 8px;
+}
+[data-encounter-variant="expanded"] .encounter-player .encounter-choice {
+  width: 100%;
+  padding: 10px 12px;
+  white-space: normal;
+  overflow-wrap: anywhere;
+}
+[data-encounter-variant="expanded"] .encounter-cue { text-align: left; }
+[data-encounter-variant="expanded"] :is(.floating-speech, .encounter-quiet) {
+  text-align: left;
+  font-kerning: none;
+  font-variant-ligatures: none;
+}
+[data-encounter-variant="expanded"] .is-typing .encounter-typed-glyph:not([data-shown]) { opacity: 0; }
+[data-encounter-variant="expanded"] .is-typing a { pointer-events: none; }
+[data-encounter-variant="expanded"] .encounter-quiet.is-typing { pointer-events: auto; }
+
+@media (min-width: 640px) and (max-height: 519px) {
+  /* More width for the long draft lines, never less room for the person. */
+  [data-encounter-variant="expanded"] .encounter-layer.is-floating .encounter-panel {
+    max-width: min(560px, calc(100vw - 32px));
+  }
+}
+
+html.encounter-title-muted #parallax h1 { opacity: 0 !important; }
+#parallax h1 { transition: opacity 160ms var(--encounter-ease); }
+@keyframes speech-appear { from { opacity: 0; transform: scale(.97); } to { opacity: 1; transform: scale(1); } }
+@keyframes player-appear { from { opacity: 0; pointer-events: none; } to { opacity: 1; pointer-events: auto; } }
+@keyframes reply-bob { 0%, 100% { translate: 0 0; } 50% { translate: 0 -3px; } }
+html[data-encounter-input="keyboard"] #parallax h1 { transition: none; }
+html[data-encounter-input="keyboard"] .encounter-layer.is-floating .encounter-panel,
+html[data-encounter-input="keyboard"] .encounter-player .encounter-choice,
+html[data-encounter-input="keyboard"] .encounter-player .encounter-answer-link { animation: none; }
+
+@media (prefers-reduced-motion: reduce) {
+  [data-encounter-variant="expanded"] .is-typing .encounter-typed-glyph:not([data-shown]) { opacity: 1; }
+  .encounter-panel, .encounter-quiet, .encounter-layer.is-floating .encounter-panel,
+  .encounter-player .encounter-choice, .encounter-player .encounter-answer-link,
+  .encounter-player[data-motion="on"] .encounter-choice,
+  .encounter-player[data-motion="on"] .encounter-answer-link { animation: none; }
+  #parallax h1 { transition: none; }
+  .encounter-cue { transition: none; transform: none; }
+  .encounter-choice:active { transform: none; }
+  .bird-anim, .bird, .animate-fade-in, .animate-fade-in-delay { animation: none; }
+  .animate-fade-in, .animate-fade-in-delay { opacity: 1; }
+  html { scroll-behavior: auto; }
+}
