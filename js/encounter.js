@@ -23,7 +23,6 @@
   const GREETING_DWELL = 140;
   const HEAD_GAP = 24;
   const REPLY_GAP = 24;
-  const SCROLL_SETTLE = 280;
   const state = {
     variant: 'expanded',
     node: 'closed',
@@ -34,7 +33,7 @@
     framing: 'overhead',
     foregroundLift: 0,
     replyAnchor: 'character',
-    scrollBuffer: 160,
+    dismissal: 'explicit',
     titleMuted: false,
     audio: false,
     submissions: 'formspree',
@@ -43,9 +42,7 @@
   let proximityTimeout;
   let pointerFrame = 0;
   let lastPointer = null;
-  let dismissScrollY = 0;
   let reservedSpace = 0;
-  let scrollCloseTimeout;
   let scrollFrame = 0;
   let layoutWidth = hero.clientWidth;
   let layoutHeight = hero.clientHeight;
@@ -130,7 +127,6 @@
     const w = hero.clientWidth;
     const h = hero.clientHeight;
     const scale = Math.max(w / 1800, h / 1125);
-    state.scrollBuffer = Math.round(Math.max(160, Math.min(280, h * .3)));
     const cx = w / 2;
     const characterX = cx - 85 * scale;
     const characterY = h + (700 - 1125) * scale;
@@ -186,10 +182,6 @@
 
   function render(focus = true) {
     typewriter.cancel();
-    if (state.open && focus) {
-      dismissScrollY = scrollY;
-      clearTimeout(scrollCloseTimeout);
-    }
     document.documentElement.dataset.encounterVariant = 'expanded';
     document.documentElement.classList.toggle('encounter-in-conversation', state.open);
     layer.classList.toggle('is-quiet', state.quiet);
@@ -272,7 +264,6 @@
   });
 
   function open() {
-    clearTimeout(scrollCloseTimeout);
     clearTimeout(quietTimeout);
     clearTimeout(proximityTimeout);
     quietLine.hidden = true;
@@ -287,7 +278,6 @@
   }
 
   function close({ quiet = false, restoreFocus = true } = {}) {
-    clearTimeout(scrollCloseTimeout);
     state.node = quiet ? 'quiet' : 'closed';
     state.open = false;
     state.quiet = quiet;
@@ -370,41 +360,22 @@
     }
     if (Math.abs(delta) > 1) {
       window.scrollBy({ top: delta / .8, behavior: 'instant' });
-      dismissScrollY = scrollY;
-      clearTimeout(scrollCloseTimeout);
     }
   }
 
-  document.addEventListener('pointerdown', event => {
+  document.addEventListener('pointerdown', () => {
     document.documentElement.dataset.encounterInput = 'pointer';
-    if (state.open && (panel.contains(event.target) || player.contains(event.target))) {
-      dismissScrollY = scrollY;
-      clearTimeout(scrollCloseTimeout);
-    }
-    if (state.open && !panel.contains(event.target) && !player.contains(event.target) && !trigger.contains(event.target) && !audioToggle.contains(event.target)) close({ restoreFocus: false });
+    // Touch scrolling can start outside the bubbles. Only explicit exits
+    // close this nonmodal conversation, not pointer contact or focus changes.
   });
   document.addEventListener('focusin', event => {
     if (event.target !== panel && (panel.contains(event.target) || player.contains(event.target))) typewriter.finish();
-    if (state.open && (panel.contains(event.target) || player.contains(event.target))) {
-      dismissScrollY = scrollY;
-      clearTimeout(scrollCloseTimeout);
-    }
-    if (state.open && !panel.contains(event.target) && !player.contains(event.target) && !trigger.contains(event.target) && !audioToggle.contains(event.target)) close({ restoreFocus: false });
     if (document.documentElement.dataset.encounterInput === 'keyboard' &&
         ((state.open && (panel.contains(event.target) || player.contains(event.target))) || aboutLayer.contains(event.target))) {
       revealKeyboardFocus(event.target);
     }
   });
-  function scrolledAway() {
-    if (Math.abs(scrollY - dismissScrollY) <= state.scrollBuffer) return false;
-    const h = hero.clientHeight;
-    const scale = Math.max(hero.clientWidth / 1800, h / 1125);
-    const characterTop = h + (700 - 1125) * scale - scrollY * .8;
-    const characterHeight = 385 * scale;
-    return characterTop + characterHeight < Math.min(96, characterHeight * .25);
-  }
   window.addEventListener('scroll', () => {
-    clearTimeout(scrollCloseTimeout);
     if (state.open && !scrollFrame) {
       scrollFrame = requestAnimationFrame(() => {
         scrollFrame = 0;
@@ -412,11 +383,6 @@
         const muted = state.titleMuted;
         place();
         if (muted !== state.titleMuted) report();
-        if (scrolledAway()) {
-          scrollCloseTimeout = setTimeout(() => {
-            if (state.open && scrolledAway()) close({ restoreFocus: false });
-          }, SCROLL_SETTLE);
-        }
       });
     }
     if (scrollY >= GREETING_SCROLL) revealGreeting('scroll');
