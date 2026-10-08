@@ -132,6 +132,13 @@ input, textarea, select {
 .text-brand-dark     { color: #1c0806; }
 
 /* background colors */
+:root {
+  /* The artwork's opaque dock is #1c0806. With the current .hero-tint,
+     its rendered edge is #21040f; untinted content must match that edge. */
+  --scene-floor-source: #1c0806;
+  --scene-floor: #21040f;
+}
+.bg-scene-floor      { background-color: var(--scene-floor); }
 .bg-\[\#230210\]     { background-color: #230210; }
 .bg-\[\#FF8B8C\]     { background-color: #FF8B8C; }
 
@@ -159,9 +166,8 @@ input, textarea, select {
    PARALLAX HERO
    ============================================ */
 #parallax {
-  /* Bottom anchor matches the about-layer (#230210) so the hand-off
-     between hero and the next section is visually seamless as the
-     parallax layers translate up off the bottom. */
+  /* Dark backing beneath the artwork. The opaque foreground and tint
+     determine its visible edge; following content matches --scene-floor. */
   background: linear-gradient(to bottom, #f4e690 0%, #f4e690 45%, #230210 70%);
   /* Pin to the small viewport so the hero doesn't resize when iOS Safari
      collapses its URL bar mid-scroll. inset:0 (from .inset-0) would otherwise
@@ -181,10 +187,9 @@ input, textarea, select {
 }
 
 
-/* Dark gradient layer to blend water into ground (sits between bg2 and bg1).
-   Bottom color matches the about-layer (#230210) so as the foreground
-   parallax translates up off the bottom of the hero, nothing else shows
-   through. */
+/* Original dark gradient beneath the foreground, blending water into
+   ground. Content below the canvas uses its rendered/tinted --scene-floor,
+   rather than assuming this untinted backing is the visible edge. */
 .ground-blend {
   background: linear-gradient(to bottom, transparent 80%, #230210 95%);
 }

@@ -297,7 +297,8 @@
   left: 0;
   right: 0;
   height: 100%;
-  background: var(--encounter-ink);
+  /* This continuation is beneath the hero tint, like the canvas itself. */
+  background: var(--scene-floor-source);
 }
 .encounter-layer.is-floating .encounter-panel,
 .encounter-quiet {
