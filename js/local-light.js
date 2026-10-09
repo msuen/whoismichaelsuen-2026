@@ -162,6 +162,7 @@
     root.dataset.timeSky=weights.night>.999?'night':weights.night<.001?'day':'changing';
     birds.style.opacity=String(1-weights.night);
     if(window.__timeOfDay)Object.assign(window.__timeOfDay,{weights:{...weights},transitioning:!!frame,nightAmount:weights.night});
+    window.__sceneBoot?.mark('palette');
   }
   async function render(animate=true) {
     const epoch=++renderEpoch;
@@ -171,9 +172,12 @@
     const target=state.weights;
     try {
       await prepareArtwork(Object.fromEntries(keys.map(k=>[k,Math.max(target[k],visibleWeights?.[k]||0)])));
+      if(target.sunset>1-1e-8)await Promise.all(artwork.map(layer=>layer.picture.querySelector('img').decode()));
     } catch (error) {
       // A failed optional palette must not break the conversation or form.
       console.warn('Local lighting could not load; keeping the current scene.',error);
+      await Promise.allSettled(artwork.map(layer=>layer.picture.querySelector('img').decode()));
+      window.__sceneBoot?.mark('palette','fallback');
       return;
     }
     if(epoch!==renderEpoch)return;

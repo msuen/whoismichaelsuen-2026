@@ -1,0 +1,25 @@
+/* Palette-ready entry: opacity only, never move or rescale the artwork. */
+html.hero-loader #parallax {
+  opacity: 1;
+  transition: opacity 420ms cubic-bezier(.215,.61,.355,1);
+}
+html.hero-booting #parallax { opacity: 0; visibility: hidden; pointer-events: none; }
+html.hero-booting #audio-toggle { visibility: hidden; }
+.scene-loader {
+  position: fixed;
+  inset: 0;
+  z-index: 100002;
+  display: grid;
+  place-items: center;
+  background: #101820;
+  color: #c7e0e8;
+  font: 16px/1.5 'Averia Libre', Georgia, serif;
+  opacity: 0;
+  pointer-events: none;
+  transition: opacity 420ms cubic-bezier(.215,.61,.355,1);
+}
+.scene-loader[hidden] { display: none; }
+html.hero-booting .scene-loader { opacity: 1; pointer-events: auto; }
+@media (prefers-reduced-motion: reduce) {
+  html.hero-loader #parallax, .scene-loader { transition: none; }
+}

@@ -158,6 +158,7 @@
       ctx.drawImage(source, HEAD.x, HEAD.y, HEAD.w, HEAD.h, HEAD.x, HEAD.y, HEAD.w, HEAD.h);
       paintBreathing(lastStretch);
     }
+    window.__sceneBoot?.mark('foreground');
   }
   window.__timeForegroundRedraw = () => { if (img.complete) drawStatic(); };
 

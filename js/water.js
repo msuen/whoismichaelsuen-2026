@@ -58,7 +58,9 @@
   });
 
   const aboutLayerEl = document.getElementById('about-layer');
-  window.__timeWaterRedraw = () => { if (reducedMotion.matches) render(); };
+  window.__timeWaterRedraw = (force = false) => {
+    if (reducedMotion.matches || force) { lastDraw = -Infinity; render(); }
+  };
 
   function render() {
     cancelAnimationFrame(frameId);
@@ -178,6 +180,7 @@
       );
     }
 
+    window.__sceneBoot?.mark('water');
     if (!reducedMotion.matches) frameId = requestAnimationFrame(render);
   }
 })();

@@ -3,6 +3,9 @@
 <head>
   <meta charset="utf-8">
   <title>Who is Michael Suen?</title>
+  <script>document.documentElement.classList.add('hero-loader', 'hero-booting');</script>
+  <style>html.hero-booting body{background:#101820}html.hero-booting #parallax{opacity:0;visibility:hidden}</style>
+  <script src="js/hero-boot.js?v=20261009-1"></script>
   <meta name="description" content="Michael Suen is an independent designer based in NYC. He runs Weirdo, a brand and product studio helping uncommon companies find themselves.">
   <meta name="author" content="Michael Suen">
   <meta name="viewport" content="width=device-width, initial-scale=1">
@@ -40,8 +43,10 @@
   <link rel="stylesheet" href="css/styles.css?v=34">
   <link rel="stylesheet" href="css/encounter.css?v=20261009-1">
   <link rel="stylesheet" href="css/local-light.css?v=20261009-1">
+  <link rel="stylesheet" href="css/hero-boot.css?v=20261009-1">
 </head>
 <body class="text-gray-400 antialiased bg-scene-floor">
+  <div id="scene-loader" class="scene-loader" role="status">Loading the waterfront…</div>
 
   <!-- Inline icon set — Tabler outline SVGs referenced via <use>. Each
        <symbol> is sourced from tabler.io/icons (MIT-licensed). Stroke
@@ -67,10 +72,9 @@
         <path d="M16 16v-3a2 2 0 1 0 -4 0"/>
         <path d="M3 7a4 4 0 0 1 4 -4h10a4 4 0 0 1 4 4v10a4 4 0 0 1 -4 4h-10a4 4 0 0 1 -4 -4l0 -10"/>
       </symbol>
-      <symbol id="ti-brand-instagram" viewBox="0 0 24 24">
-        <path d="M4 8a4 4 0 0 1 4 -4h8a4 4 0 0 1 4 4v8a4 4 0 0 1 -4 4h-8a4 4 0 0 1 -4 -4l0 -8"/>
-        <path d="M9 12a3 3 0 1 0 6 0a3 3 0 0 0 -6 0"/>
-        <path d="M16.5 7.5v.01"/>
+      <symbol id="ti-brand-x" viewBox="0 0 24 24">
+        <path d="M4 4l11.733 16h4.267l-11.733 -16l-4.267 0"/>
+        <path d="M4 20l6.768 -6.768m2.46 -2.46l6.772 -6.772"/>
       </symbol>
       <symbol id="ti-volume" viewBox="0 0 24 24">
         <path d="M15 8a5 5 0 0 1 0 8"/>
@@ -219,12 +223,6 @@
                 <div class="sbi-leaf mt-1 flex-shrink-0 w-4 h-4 rounded-full bg-[#FF8B8C] flex items-center justify-center">
                   <span class="text-brand-dark text-[10px] font-bold leading-none">3</span>
                 </div>
-                <p>Trialing an apprenticeship model to establish <strong class="text-white">support systems of learning</strong> in an environment unfavorable to them.</p>
-              </div>
-              <div class="flex gap-3 items-start">
-                <div class="sbi-leaf mt-1 flex-shrink-0 w-4 h-4 rounded-full bg-[#FF8B8C] flex items-center justify-center">
-                  <span class="text-brand-dark text-[10px] font-bold leading-none">4</span>
-                </div>
                 <p>Prototyping tiny resources, tools, and other experiments for independent creatives and service providers.</p>
               </div>
             </div>
@@ -243,7 +241,7 @@
                 <div class="sbi-leaf mt-1 flex-shrink-0 w-4 h-4 rounded-full bg-[#FF8B8C] flex items-center justify-center">
                   <span class="text-brand-dark text-[10px] font-bold leading-none">2</span>
                 </div>
-                <p>DM Michael on <a href="https://bsky.app/profile/poetichentai.bsky.social" target="_blank" class="link-pill"><svg class="ti" aria-hidden="true"><use href="#ti-brand-bluesky"/></svg>Bluesky</a>, <a href="https://www.linkedin.com/in/michaelsuen/" target="_blank" class="link-pill"><svg class="ti" aria-hidden="true"><use href="#ti-brand-linkedin"/></svg>LinkedIn</a>, or <a href="https://www.instagram.com/poetichentai" target="_blank" class="link-pill"><svg class="ti" aria-hidden="true"><use href="#ti-brand-instagram"/></svg>Instagram</a>.</p>
+                <p>DM Michael on <a href="https://bsky.app/profile/poetichentai.bsky.social" target="_blank" class="link-pill"><svg class="ti" aria-hidden="true"><use href="#ti-brand-bluesky"/></svg>Bluesky</a>, <a href="https://www.linkedin.com/in/michaelsuen/" target="_blank" class="link-pill"><svg class="ti" aria-hidden="true"><use href="#ti-brand-linkedin"/></svg>LinkedIn</a>, or <a href="https://x.com/poetichentai" target="_blank" rel="noopener noreferrer" class="link-pill"><svg class="ti" aria-hidden="true"><use href="#ti-brand-x"/></svg>X.com</a>.</p>
               </div>
               <div class="flex gap-3 items-start">
                 <div class="sbi-leaf mt-1 flex-shrink-0 w-4 h-4 rounded-full bg-[#FF8B8C] flex items-center justify-center">
@@ -317,9 +315,9 @@
   <script src="js/encounter-typewriter.js?v=20261007-1"></script>
   <script src="js/encounter.js?v=20261008-1"></script>
   <script src="js/ui-sounds.js?v=20261007-1"></script>
-  <script src="js/local-light.js?v=20261008-1"></script>
-  <script src="js/main.js?v=43"></script>
+  <script src="js/local-light.js?v=20261009-1"></script>
+  <script src="js/main.js?v=44"></script>
   <script src="js/soft-blur-in.js?v=9"></script>
-  <script src="js/water.js?v=4"></script>
+  <script src="js/water.js?v=5"></script>
 </body>
 </html>
