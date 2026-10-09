@@ -36,7 +36,7 @@
   padding: 10px 16px;
   color: var(--encounter-ink);
   background: var(--encounter-paper);
-  border: 1px solid rgb(35 2 16 / .16);
+  border: 1px solid color-mix(in srgb, var(--encounter-ink) 16%, transparent);
   border-radius: 16px;
   font-size: 1.125rem;
   white-space: nowrap;
@@ -55,8 +55,8 @@
   width: 11px;
   height: 11px;
   background: var(--encounter-paper);
-  border-right: 1px solid rgb(35 2 16 / .16);
-  border-bottom: 1px solid rgb(35 2 16 / .16);
+  border-right: 1px solid color-mix(in srgb, var(--encounter-ink) 16%, transparent);
+  border-bottom: 1px solid color-mix(in srgb, var(--encounter-ink) 16%, transparent);
   transform: rotate(45deg);
 }
 .encounter-layer.is-greeted:not(.is-quiet) .encounter-cue,
@@ -70,7 +70,10 @@
 .encounter-trigger:focus-visible { outline: 2px solid var(--encounter-paper); outline-offset: 5px; }
 .encounter-trigger:focus-visible .encounter-cue { outline: 2px solid var(--encounter-ink); outline-offset: 3px; }
 @media (hover: hover) and (pointer: fine) {
-  .encounter-trigger:hover .encounter-cue { color: #6d1637; border-color: rgb(35 2 16 / .32); }
+  .encounter-trigger:hover .encounter-cue {
+    color: var(--time-reply-hover, #6d1637);
+    border-color: color-mix(in srgb, var(--encounter-ink) 32%, transparent);
+  }
 }
 
 .encounter-panel {

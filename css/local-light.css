@@ -9,8 +9,6 @@ html[data-time-grading] .hero-tint { visibility:hidden; }
 html[data-time-grading] .ground-blend { background:linear-gradient(to bottom,transparent 80%,var(--scene-floor) 95%); }
 html[data-time-grading] .encounter-stage::after { background:var(--scene-floor); }
 html[data-time-grading] #parallax h1 { color:var(--time-heading); }
-html[data-time-grading] .audio-toggle { color:var(--time-accent); }
-html[data-time-grading] #bio .sbi-leaf { background:var(--time-accent); }
 html[data-time-grading] .encounter-player .encounter-choice {
   background:var(--time-reply);border-color:color-mix(in srgb,var(--encounter-paper) 20%,transparent);
 }
