@@ -32,11 +32,13 @@
     render();
   }
 
+  let backingScale = 1;
   function resize() {
     const parent = canvas.parentElement;
-    const dpr = window.devicePixelRatio || 1;
-    canvas.width = parent.clientWidth * dpr;
-    canvas.height = parent.clientHeight * dpr;
+    // Keep CSS geometry/sine-wave timing; bound only the backing pixels.
+    backingScale = Math.min(window.devicePixelRatio || 1, Math.sqrt(1000000 / (parent.clientWidth * parent.clientHeight)));
+    canvas.width = Math.ceil(parent.clientWidth * backingScale);
+    canvas.height = Math.ceil(parent.clientHeight * backingScale);
     canvas.style.width = '100%';
     canvas.style.height = '100%';
   }
@@ -49,14 +51,18 @@
   // Honor reduced motion: leave the waterfront still when requested.
   const reducedMotion = matchMedia('(prefers-reduced-motion: reduce)');
   let frameId = 0;
+  let lastDraw = -Infinity;
   reducedMotion.addEventListener('change', () => {
     cancelAnimationFrame(frameId);
     render();
   });
 
   const aboutLayerEl = document.getElementById('about-layer');
+  window.__timeWaterRedraw = () => { if (reducedMotion.matches) render(); };
 
   function render() {
+    cancelAnimationFrame(frameId);
+    frameId = 0;
     if (!waterReady || !buildingsReady) return;
 
     // Skip per-frame work when the about-layer has fully covered the
@@ -66,8 +72,14 @@
       return;
     }
 
-    const t = reducedMotion.matches ? 0 : (performance.now() - startTime) / 1000;
-    const dpr = window.devicePixelRatio || 1;
+    const now = performance.now();
+    if (!reducedMotion.matches && now - lastDraw < 1000 / 30 - 1) {
+      frameId = requestAnimationFrame(render);
+      return;
+    }
+    lastDraw = now;
+    const t = reducedMotion.matches ? 0 : (now - startTime) / 1000;
+    const dpr = backingScale;
     const pw = canvas.parentElement.clientWidth;
     const ph = canvas.parentElement.clientHeight;
 
@@ -75,6 +87,9 @@
     ctx.setTransform(1, 0, 0, 1, 0, 0);
     ctx.scale(dpr, dpr);
     ctx.clearRect(0, 0, pw, ph);
+
+    const waterSource = window.__timeWater?.water || waterImg;
+    const reflectionSource = window.__timeWater?.reflection || buildingsImg;
 
     // Compute object-fit: cover dimensions, anchored bottom-center
     const imgAspect = waterImg.width / waterImg.height;
@@ -129,7 +144,7 @@
       const dx = Math.sin(progress * 6 + t * 0.9) * amp * strength;
 
       ctx.drawImage(
-        buildingsImg,
+        reflectionSource,
         0, srcY, buildingsImg.width, srcH + 1,
         bX + dx, dstY, bW, refSliceH + 1
       );
@@ -157,7 +172,7 @@
       const dy = Math.sin(progress * 6 + t * 0.9) * amp * 0.4 * strength;
 
       ctx.drawImage(
-        waterImg,
+        waterSource,
         0, srcY, waterImg.width, srcH + 1,
         drawX + dx, dstY + dy, drawW, sliceH + 1
       );

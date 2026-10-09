@@ -134,10 +134,32 @@
   let startedAt = 0;
   let running = false;
 
-  function drawStatic() {
-    ctx.clearRect(0, 0, canvas.width, canvas.height);
-    ctx.drawImage(img, 0, 0);
+  let lastStretch = 0;
+  function paintBreathing(stretch) {
+    const source = window.__timeForeground || img;
+    const top = Math.floor(BODY.y - Math.max(state.breath.amp, lastStretch, stretch) - 1);
+    const height = BODY.y + BODY.h - top;
+    // Restore only the tiny union of the old/new shirt positions. Head,
+    // dock and every other pixel stay cached instead of blitting 2M pixels.
+    ctx.clearRect(BODY.x, top, BODY.w, height);
+    ctx.drawImage(source, BODY.x, top, BODY.w, height, BODY.x, top, BODY.w, height);
+    ctx.clearRect(ERASE_BODY.x, ERASE_BODY.y, ERASE_BODY.w, ERASE_BODY.h);
+    ctx.drawImage(source, BODY.x, BODY.y, BODY.w, BODY.h,
+      BODY.x, BODY.y - stretch, BODY.w, BODY.h + stretch);
+    lastStretch = stretch;
+    state.renderedStretch = stretch;
   }
+  function drawStatic() {
+    const source = window.__timeForeground || img;
+    ctx.clearRect(0, 0, canvas.width, canvas.height);
+    ctx.drawImage(source, 0, 0);
+    if (!reducedMotion.matches) {
+      ctx.clearRect(ERASE_HEAD.x, ERASE_HEAD.y, ERASE_HEAD.w, ERASE_HEAD.h);
+      ctx.drawImage(source, HEAD.x, HEAD.y, HEAD.w, HEAD.h, HEAD.x, HEAD.y, HEAD.w, HEAD.h);
+      paintBreathing(lastStretch);
+    }
+  }
+  window.__timeForegroundRedraw = () => { if (img.complete) drawStatic(); };
 
   // Cache the about-layer reference once — querying every frame is cheap
   // but a closure lookup is cheaper.
@@ -160,32 +182,7 @@
     const breathPhase = (elapsed % breathPeriod) / breathPeriod;
     const stretch = state.breath.amp * (1 - Math.cos(breathPhase * Math.PI * 2)) / 2;
 
-    // Repaint from scratch every frame.
-    ctx.clearRect(0, 0, canvas.width, canvas.height);
-    ctx.drawImage(img, 0, 0);
-
-    // Wipe the head and shoulders regions so the static base pixels
-    // don't ghost behind the animated copies. The 9 px gap between them
-    // (the neck at y=825–834) is intentionally left intact — the base
-    // image's neck pixels stay put while the body breathes.
-    ctx.clearRect(ERASE_HEAD.x, ERASE_HEAD.y, ERASE_HEAD.w, ERASE_HEAD.h);
-    ctx.clearRect(ERASE_BODY.x, ERASE_BODY.y, ERASE_BODY.w, ERASE_BODY.h);
-
-    // BODY: bottom-anchored vertical stretch. Source height stays the
-    // same; dest height grows by `stretch` and dest Y shifts up by the
-    // same amount, so the chest cut line stays glued to its original Y.
-    ctx.drawImage(
-      img,
-      BODY.x, BODY.y, BODY.w, BODY.h,
-      BODY.x, BODY.y - stretch, BODY.w, BODY.h + stretch
-    );
-
-    // HEAD: static. Drawn at original position with no rotation.
-    ctx.drawImage(
-      img,
-      HEAD.x, HEAD.y, HEAD.w, HEAD.h,
-      HEAD.x, HEAD.y, HEAD.w, HEAD.h
-    );
+    paintBreathing(stretch);
 
     requestAnimationFrame(frame);
   }
